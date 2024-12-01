@@ -1,0 +1,5 @@
+SP1= So phuc: 8+i*5
+SP2= So phuc: 2+i*1
+
+SP3= So phuc: 10+i*6
+SP4= So phuc: 6+i*4

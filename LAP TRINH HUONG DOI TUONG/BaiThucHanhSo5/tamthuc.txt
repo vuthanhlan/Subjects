@@ -1,0 +1,4 @@
+doi dau Tam thuc: -3x^2+-5x+-9
+doi dau Tam thuc: -1x^2+-2x+-3
+Tong 2 Tam thuc: 4x^2+7x+12
+Hieu 2 Tam thuc: 2x^2+3x+6

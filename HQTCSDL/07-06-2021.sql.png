@@ -1,0 +1,104 @@
+﻿use master
+create database QLTruongHoc
+go
+use QLTruongHoc
+go
+
+create table GV(
+	MaGV varchar(10) not null primary key,
+	TenGV nvarchar(20)
+)
+create table LOP(
+	MaLop varchar(10) not null primary key,
+	TenLop nvarchar(20),
+	Phong nvarchar(20),
+	SiSo int,
+	MaGV varchar(10),
+	constraint FK_L_GV foreign key(MaGV)
+		references GV(MaGV)
+)
+create table SV(
+	MaSV varchar(10) not null primary key,
+	TenSV nvarchar(20),
+	GioiTinh nvarchar(10),
+	QueQuan nvarchar(30),
+	MaLop varchar(10),
+	constraint FK_SV_L foreign key(MaLop)
+		references LOP(MaLop)
+)
+
+insert into GV values('GV01',N'Nguyễn Nữ Huyền'),
+					('GV02',N'Nguyễn Xuân Huyền'),
+					('GV03',N'Mai Thanh Hồng')
+
+insert into LOP values('ML01','CNTT01','P01',45,'GV01'),
+						('ML02','TCNH01','P02',50,'GV02'),
+						('ML03','KT02','P03',60,'GV03')
+insert into SV values('SV01',N'Hoàng Thị Thu Nga',N'Nữ',N'Thái Bình','ML01'),
+					 ('SV02',N'Vũ Thanh lan',N'Nữ',N'Hà Nội','ML02'),
+					 ('SV03',N'Lưu Hải Anh',N'Nữ',N'Phú Thọ','ML03'),
+					 ('SV04',N'Lê Xuân Dương',N'Nam',N'Thanh Hóa','ML02'),
+					 ('SV05',N'Bùi Trung Nam',N'Nam',N'Ninh Bình','ML03')
+select * from GV
+select * from LOP
+select * from SV
+
+--cau2
+create function fn_DSSV(@tenl nvarchar(20), @tengv nvarchar(20))
+returns @bang table(MaSV varchar(10),
+					TenSV nvarchar(20),
+					GioiTinh nvarchar(10),
+					QueQuan nvarchar(30),
+					MaLop varchar(10))
+as
+ begin
+	insert into @bang
+	select MaSV, TenSV,GioiTinh,QueQuan,LOP.MaLop
+	from SV inner join Lop on SV.MaLop=LOP.MaLop
+			inner join GV on Lop.MaGV=GV.MaGV
+	where TenLop=@tenl and TenGV=@tengv
+	return
+ end
+ select * from GV
+select * from LOP
+select * from SV
+select * from fn_DSSV('CNTT01','Nguyễn Nữ Huyền')
+
+--cau3
+create proc pr_insertSV(@msv varchar(10),
+						@tensv nvarchar(20),
+						@gt nvarchar(10),
+						@qq nvarchar(30),
+						@tl nvarchar(20))
+as
+ begin
+	declare @ml varchar(10)
+	select @ml =MaLop from LOP
+	if(not exists(select * from LOP where TenLop=@tl))
+		print('Khong co Ten Lop '+@tl+' trong bang LOP')
+	else
+		insert into SV values(@msv,@tensv,@gt,@qq,@ml)
+ end
+
+ select * from SV
+ exec pr_insertSV 'SV06',N'Bùi Hai Nam',N'Nam',N'Ninh Bình','CNTT01'
+  exec pr_insertSV 'SV07',N'Bùi Hai Nam',N'Nam',N'Ninh Bình','CNTT'
+
+--cau4
+create trigger trg_updateLop
+on SV
+for update
+as
+ begin
+	declare @truoc varchar(10),@sau varchar(10)
+	select @truoc=MaLop from deleted
+	select @sau=MaLop from inserted
+	update LOP set SiSo=SiSo+1
+				where MaLop=@sau
+	update LOP set SiSo=SiSo-1
+				where Malop=@truoc
+ end
+
+ select * from SV
+ select * from LOP
+ update SV set MaLop='ML02' where MaSV='SV01'

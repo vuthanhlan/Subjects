@@ -1,0 +1,12 @@
+Ma tran P
+5 8 
+9 6 
+Ma tran Q
+3 1 
+4 5 
+Tong 2 ma tran la:
+8 9 
+13 11 
+Hieu 2 ma tran la:
+2 7 
+5 1 

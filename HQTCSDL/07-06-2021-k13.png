@@ -1,0 +1,107 @@
+﻿use master
+create database QLSach
+go
+use QLSach
+go
+
+create table TACGIA(
+	MaTG varchar(10) not null primary key,
+	TenTG nvarchar(20),
+	SoLuongco int
+)
+create table NHAXB(
+	MaNXB varchar(10) not null primary key,
+	TenNXB nvarchar(20),
+	SoLuongco int
+)
+create table SACH(
+	MaSach varchar(10) not null primary key,
+	TenSach nvarchar(20),
+	MaNXB varchar(10),
+	MaTG varchar(10),
+	NamXB int,
+	SoLuong int,
+	DonGia int,
+	constraint FK_S_TG foreign key(MaTG)
+		references TACGIA(MaTG),
+	constraint FK_S_NXB foreign key(MaNXB)
+		references NHAXB(MaNXB)
+)
+insert into TACGIA values('TG01',N'Trần Đăng Khoa',5),
+						 ('TG02',N'Trần Đăng Hùng',6),
+						 ('TG03',N'Lý Lan',8),
+						 ('TG04',N'Hàm Mặc Tử',6)
+insert into NHAXB values('NXB1',N'Nguyễn Minh Châu', 6),
+						('NXB2',N'Nguyễn Hùng Hoàng', 5),
+						('NXB3',N'Bùi Trọng Tấn', 8),
+						('NXB4',N'Trần Trung Kiên', 9),
+						('NXB5',N'Hoàng Minh Khai', 6)
+insert into SACH values('MS01',N'Học','NXB1','TG01',2020,40,40000),
+						('MS02',N'Làm việc','NXB2','TG02',2021,50,30000),
+						('MS03',N'Học và Làm Việc','NXB3','TG03',2019,60,160000),
+						('MS04',N'Học Mãi','NXB4','TG04',2020,30,120000)
+
+select * from TACGIA
+select * from NHAXB
+select * from SACH
+
+--cau2
+create proc pr_insertSach(@ms varchar(10),
+						 @tens nvarchar(20),
+						 @tennxb nvarchar(20),
+						 @mtg varchar(10),
+						 @namxb int,
+						 @sl int,
+						 @dg int)
+as
+ begin
+	declare @mnxb varchar(10)
+	select @mnxb=MaNXB from NHAXB
+	if(not exists(select * from NHAXB where TenNXB=@tennxb))
+		print('Khong co ten NXB '+@tennxb+' Trong bang NHAXB')
+	else
+		insert into SACH values(@ms,@tens,@mnxb,@mtg,@namxb,@sl,@dg)
+ end
+
+ select * from SACH
+ exec pr_insertSach 'MS05',N'Học Tot',N'Nguyễn Minh Châu','TG03',2022,10,120000
+ exec pr_insertSach 'MS06',N'Học Tot','NXB6','TG03',2022,10,120000
+
+ --cau3
+create function fn_thongketienban(@tentg nvarchar(20))
+returns int
+as
+ begin
+	declare @tienban int
+	set @tienban=(select sum(SoLuong*DonGia) from SACH inner join TACGIA
+														on SACH.MaTG=SACH.MaTG
+														where TenTG=@tentg)
+ return @tienban
+ end
+
+ select dbo.fn_thongketienban(N'Trần Đăng Khoa')
+
+--cau4
+create trigger trg_insertSach
+on SACH
+for insert
+as
+ begin
+	declare @mnxb varchar(10)
+	select @mnxb=MaNXB from inserted
+	if(not exists(select * from NHAXB where MaNXB=@mnxb))
+		begin
+			raiserror('Khong ton tai MaNXB nay trong bang NHXB',16,1)
+			rollback transaction
+		end
+	else
+		update NHAXB set SoLuongco=SoLuongco+(select count(*) from inserted where MaNXB=@mnxb)
+		where MaNXB=@mnxb
+ end
+
+ select * from SACH
+ select * from NHAXB
+ insert into SACH values('MS06',N'Học Nhe','NXB4','TG02',2020,30,120000),
+						('MS09',N'Học Nhe','NXB5','TG02',2020,30,120000)	
+ insert into SACH values('MS07',N'Học Nhe','NXB5','TG02',2020,30,120000),
+						('MS08',N'Học Nhe','NXB5','TG02',2020,30,120000)

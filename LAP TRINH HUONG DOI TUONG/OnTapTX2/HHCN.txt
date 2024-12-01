@@ -1,0 +1,6 @@
+HHCN a: HHCN(2;2;6) 
+HHCN b: HHCN(5;6;5) 
+Dien tich toan phan cua HHCN a la: 56
+Dien tich toan phan cua HHCN b la: 170
+ghep 2 HHCN: HHCN(0;0;0) 
+

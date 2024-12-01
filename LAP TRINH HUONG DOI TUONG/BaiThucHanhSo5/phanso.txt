@@ -1,0 +1,10 @@
+Tong 2 Phan so la: 88/64
+gia tri cua tong 2 phan so la: 1.375
+Hieu 2 Phan so la: -8/64
+gia tri cua hieu 2 phan so la: -0.125
+Tich 2 Phan so la: 30/64
+
+gia tri cua tich 2 phan so la: 0.46875
+Thuong 2 Phan so la: 40/48
+
+gia tri cua thuong 2 phan so la: 0.833333

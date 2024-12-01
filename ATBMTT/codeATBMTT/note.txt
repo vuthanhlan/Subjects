@@ -1,0 +1,5 @@
+file jave.docx là code java các thuật toán ceaser, affline ...
+
+ktra số nguyên tố có 4 thuật toán
+
+code RSA, DES, Diffie và Hill có khả năng không vào
